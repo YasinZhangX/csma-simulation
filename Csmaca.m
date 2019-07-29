@@ -1,12 +1,11 @@
-function [AllFrame SuccessFrame] = Csmaca(NumberNodes,ConWindow)                          
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 步骤一 : 初始化
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-MINBACKOFFEXPONENT = 3;
-MAXBACKOFFEXPONENT = 5;
-MAXNUMBACKOFFS = 4;
+% IEEE 802.15.4 CSMA/CA MAC
+function [AllFrame, SuccessFrame, BackoffTime] = Csmaca(NumberNodes,ConWindow, minBE, maxBE)   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%步骤一 : 初始化
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MINBACKOFFEXPONENT = minBE;
+MAXBACKOFFEXPONENT = maxBE;
+MAXNUMBACKOFFS = 5;
 TRUE = 1;                                                                  %表示事件为真                       
 FALSE = 0;                                                                 %表示事件为假                                                     
 ACK = 2.8;                                                                 %ACK帧相当于0.5个时隙
@@ -46,11 +45,9 @@ RecordSendTime=zeros(NumberNodes,400,3);                                   %记录
 SendNodeIndex=zeros(1,NumberNodes);                                        %记录数据发送成功过程下标
 RecordSendTimeFail=zeros(NumberNodes,400,3);                               %记录数据发送失败过程
 SendNodeIndexFail=zeros(1,NumberNodes);                                    %记录数据发送失败过程下标
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %步骤2：CSMA/CA循环处理开始
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for t = 1:AllSlotTime
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %步骤2.1：帧进缓冲区，根据不同情况进行处理
@@ -157,9 +154,11 @@ for t = 1:AllSlotTime
                     else
                         BackoffExponent(j) = min(BackoffExponent(j)+1, MAXBACKOFFEXPONENT);  % 更新退避指数
                         BackoffTime(j) = SetBackoffTime(BackoffExponent(j));  %更新碰撞时间
+                        if RecordBackoffTime(j,t)==0
+                            RecordBackoffTime(j,t)=BackoffTime(j);                          %记录退避时间
+                        end
                     end
-                    
-                end    
+                 end    
               end 
           end
       end
@@ -179,11 +178,8 @@ for t = 1:AllSlotTime
 end
 AllFrame = AllNumber;
 SuccessFrame = SuccessNumber; 
+BackoffTime = sum(RecordBackoffTime(:));
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 将CSMA过程记录下来，用动态图形显示碰撞过程
 %Display1(RecordBackoffTime,RecordSendTime,SendNodeIndex,RecordSendTimeFail, SendNodeIndexFail,AllSlotTime,NumberNodes,ConWindow);
-%将CSMA过程记录下来，用动态图形显示碰撞过程
