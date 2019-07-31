@@ -54,8 +54,9 @@ legend('minBE=2','minBE=3','minBE=4','minBE=5');
 box on;
 grid on;
 xlabel('Nodes');
-ylabel('Backoff Time');
+ylabel('Delay/slot');
 % xlim([1, 15]);                                  % 只设定x轴的绘制范围
 set(gca,'XTick',0:1:n);                          % 改变x轴坐标间隔显示 这里间隔为1
 % set(gca,'YTickLabel',['0' '2' '4' '6' '6.5' '7' '7.5' '8' '8.5' '9']);      % 改变y轴坐标间隔显示
-title('CSMA/CA: BackoffTime vs Nodes');
+title('CSMA/CA: Delay vs Nodes');
+
