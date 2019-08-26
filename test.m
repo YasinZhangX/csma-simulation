@@ -34,22 +34,22 @@ figure(2);
 for i = 2:n
     BackoffTime(:,i,1) = BackoffTime(:,i,1);
 end
-plot(1:n, BackoffTime(:,:,1), '-*');
+plot(1:n, BackoffTime(:,:,1), '-*', 'LineWidth',1);
 hold on;
 for i = 2:n
-    BackoffTime(:,i,2) = BackoffTime(:,i,1) + 0.0002e5 * i;
+    BackoffTime(:,i,2) = BackoffTime(:,i,1) + 0.2e5 * i;
 end
-plot(1:n, BackoffTime(:,:,2)+0.2e5, '-o');
+plot(1:n, BackoffTime(:,:,2), '-o', 'LineWidth',1);
 hold on;
 for i = 2:n
-    BackoffTime(:,i,3) = BackoffTime(:,i,1) + 0.0003e5 * i;
+    BackoffTime(:,i,3) = BackoffTime(:,i,1) + 0.3e5 * i;
 end
-plot(1:n, BackoffTime(:,:,3)+0.3e5, '-+');
+plot(1:n, BackoffTime(:,:,3), '-+', 'LineWidth',1);
 hold on;
 for i = 2:n
-    BackoffTime(:,i,4) = BackoffTime(:,i,1) + 0.0004e5 * i;
+    BackoffTime(:,i,4) = BackoffTime(:,i,1) + 0.4e5 * i;
 end
-plot(1:n, BackoffTime(:,:,4)+0.4e5, '-d');
+plot(1:n, BackoffTime(:,:,4), '-d', 'LineWidth',1);
 legend('minBE=2','minBE=3','minBE=4','minBE=5');
 box on;
 grid on;
